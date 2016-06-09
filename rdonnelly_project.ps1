@@ -6,9 +6,10 @@
 #This script assumes you have a powershell profile defined that has appropriate credentials (access key and shared secret) with rights to read ec2 information.
 
 $vpcid = '*'
-$input = Read-Host -Prompt 'Input your VPC ID; for all VPC leave blank:'
+$input = Read-Host -Prompt 'Input your VPC ID; for all VPC leave blank'
 
 if ($input -ne '') { $vpcid = $input }
 
 $MyInstances = (Get-EC2Instance -Filter @{Name="vpc-id"; Values=$vpcid} ).Instances 
 
+$MyInstances | select VpcId, InstanceId, PrivateIpAddress, @{Name=’SecurityGroups';Expression={[string]::join(“|”, ($_.SecurityGroups.GroupName))}} | Export-Csv -NoTypeInformation c:\scripts\report.csv
